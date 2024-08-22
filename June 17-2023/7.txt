@@ -1,0 +1,20 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: frontend-deployment
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            component: frontend-deployment
+    template:
+        metadata:
+            labels:
+                component: frontend-deployment
+        spec:
+            containers:
+                - name: frontend
+                  image: shahedmehbub/feb-23-cicd-frontend:latest
+                  ports:
+                    - containerPort: 80

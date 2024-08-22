@@ -1,0 +1,47 @@
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC1HfTJ+KnQQXARx6alxPjz38K8BGfXYqMfkMBCj7PI5dxSltYiQcdJxdBMjUAJUApxvZahU6JmT2M7EjOF0zAdtlL0BPcX8KEZTEwVhJSO2wlvdicJgRJFsFKX5FikY/yOYmBOpn0H/MCDGLQdk+zZ/ptYnoNF/UCKU8FnBvLjCgOWExzgExZBU22W0iR+V4uu3jOSDuzSHvT3/K/Il6VzyFuLK536zTPZrvOwyXsPgB6JkGLZgfU8j2laN6yNFN+kG9a7oIzTdhtPn66rJ0hYnh5Bo551+QktGaq31AwJkiK7raeVi8VGAEUtY7GRymDsjzlTbXRwqurd+Zq7OL2RAoym/HoapimWcrCRrEhSIWUczQgUsXY8iiq+/AlsUG/Z+KxXQcQFIgKxwnXkP/qNxwknMRjGrrSRvVQ1cXSX9s2btb+qIHJmpgGSx9RyKvUFRsq4h6op/MdKxgdB6rcqn6I1WEGlwnGUTBUk7irYkNo5M1FSlzapM+Yk4VcEAW0= ubuntu@ip-172-31-34-168"
+}
+ 
+resource "aws_security_group" "allow_all" {
+  name        = "allow_all"
+  description = "Allow all inbound traffic"
+  vpc_id      = module.vpc.vpc_id
+ 
+  ingress {
+    description      = "All from everywhere"
+    from_port        = 0
+    to_port          = 65535
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+ 
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+ 
+  tags = {
+    Name = "allow_all"
+  }
+}
+ 
+ 
+resource "aws_instance" "swarm_server" {
+  ami = "ami-0f5ee92e2d63afc18"
+ 
+  instance_type = "t2.medium"
+  key_name = aws_key_pair.deployer.key_name
+ 
+  subnet_id     = "${element(module.vpc.public_subnets, 1)}"
+  associate_public_ip_address = true
+  vpc_security_group_ids = [aws_security_group.allow_all.id]
+ 
+  tags = {
+    Name = "swarm-server"
+  }
+}

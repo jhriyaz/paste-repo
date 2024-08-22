@@ -1,0 +1,42 @@
+
+stages:
+  - build
+  - deploy
+ 
+docker_build_backend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t backend backend
+    - docker tag backend zihadbappy/feb-23-cicd-backend:latest
+    - echo "$DOCKERHUB_PASSWORD" | docker login -u zihadbappy --password-stdin
+    - docker push zihadbappy/feb-23-cicd-backend:latest
+ 
+docker_build_frontend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t frontend frontend
+    - docker tag frontend zihadbappy/feb-23-cicd-frontend:latest
+    - echo "$DOCKERHUB_PASSWORD" | docker login -u zihadbappy --password-stdin
+    - docker push zihadbappy/feb-23-cicd-frontend:latest
+ 
+deploy_backend_k8s:
+  stage: deploy
+  image: bearengineer/awscli-kubectl
+  script:
+    - aws eks update-kubeconfig --region us-east-2 --name feb-23-eks-june17
+    - kubectl apply -f deployments/backend-deployment.yaml -f deployments/backend-service.yaml
+    - kubectl rollout restart -f deployments/backend-deployment.yaml
+ 
+deploy_frontend_k8s:
+  stage: deploy
+  image: bearengineer/awscli-kubectl
+  script:
+    - aws eks update-kubeconfig --region us-east-2 --name feb-23-eks-june17
+    - kubectl apply -f deployments/frontend-deployment.yaml -f deployments/frontend-service.yaml
+    - kubectl rollout restart -f deployments/frontend-deployment.yaml

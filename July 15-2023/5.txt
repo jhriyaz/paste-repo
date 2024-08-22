@@ -1,0 +1,18 @@
+
+---
+- hosts: swarm
+  become: yes
+  tasks:
+    - name: Install nginx
+      package:
+        name: nginx
+        state: present
+ 
+    - name: Copy index.html to nginx server
+      copy:
+        src: index.html
+        dest: /var/www/html/
+	- name: Remove file (delete file)
+	  file:
+	    path: /var/www/html/index.html
+		state: absent

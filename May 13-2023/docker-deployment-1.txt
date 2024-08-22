@@ -1,0 +1,11 @@
+
+version: "3"
+services:
+ backend-service:
+  image: zihadbappy/two-tier-backend-image:latest
+  deploy:
+    replicas: 3
+ frontend:
+  image: zihadbappy/two-tier-frontend-image:v2
+  ports:
+   - 8081:80

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Read variable from the .env file
+source ./.env
+
+# Check for empty vars
+if [ -z "$EC2_NAME" ] || [ -z "$EC2_TYPE" ] ||[ -z "$EC2_VPC" ] || \
+   [ -z "$EC2_SUBNET" ] || [ -z "$EC2_IMAGE" ]; then
+    echo "Please pass the required variables."
+    echo "The required variables are EC2_NAME, EC2_TYPE, EC2_VPC"
+    exit 1
+fi
+
+# Check if AWS CLI is installed
+is_aws_cli="$(which aws)"
+if [ -z "$is_aws_cli" ]; then
+    echo "AWS CLI not found. Install it from https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"
+    exit 1
+fi
+
+# Create ec2 instance $name
+echo "The instance name is $EC2_NAME"
+echo "The instance type is $EC2_TYPE"
+echo "The instance VPC is $EC2_VPC"
+echo "The instance VPC is $EC2_TYPE"
+echo "The instance VPC is $EC2_IMAGE"
+
+aws ec2 run-instances --image-id $EC2_IMAGE --instance-type $EC2_TYPE --subnet-id $EC2_SUBNET                     

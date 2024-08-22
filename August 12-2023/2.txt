@@ -1,0 +1,34 @@
+server {
+    listen 80 ;
+
+
+    location /api/v1/field-force/auth {
+        proxy_pass http://auth:8000;
+       }
+
+    location /api/v1/field-force/users {
+        proxy_pass http://user:3000;
+       }
+
+    location /api/v1/field-force/task {
+        proxy_pass http://task:8000;
+       }
+
+    location /api/v1/field-force/delivery {
+        proxy_pass http://delivery:3000;
+       }
+
+    location /api/v1/field-force/attendance {
+        proxy_pass http://attendance:3000;
+       }
+
+    location / {
+        proxy_pass http://frontend:3000;
+       }
+
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

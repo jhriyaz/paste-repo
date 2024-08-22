@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Read variable from the .env file
+source ./.env
+
+# Check for empty vars
+if [ -z "$EC2_NAME" ] || [ -z "$EC2_TYPE" ] ||[ -z "$EC2_VPC" ]; then
+    echo "Please pass the required variables."
+    echo "The required variables are EC2_NAME, EC2_TYPE, EC2_VPC"
+    exit
+fi
+
+
+# Create ec2 instance $name
+echo "The instance name is $EC2_NAME"
+echo "The instance name is $EC2_TYPE"
+echo "The instance name is $EC2_VPC"

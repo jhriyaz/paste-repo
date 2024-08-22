@@ -1,0 +1,37 @@
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: create a VPC with dedicated tenancy and a couple of tags
+      ec2_vpc_net:
+        name: ansible-vpc
+        cidr_block: 10.0.0.0/16
+        region: us-east-1
+      register: vpc_result
+
+    - name: Create Internet gateway
+      ec2_vpc_igw:
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        state: present
+      register: igw
+
+    - name: Create Public subnet for FE servers
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        az: "us-east-1a"
+        cidr: 10.0.0.0/24
+        map_public: true
+        tags:
+          Name: Public_Subnet
+      register: public_subnet
+
+    - name: Create Private subnet for BE and DB servers
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ vpc_result.vpc.id }}"
+        az: "us-east-1a"
+        cidr: 10.0.1.0/24
+        tags:
+          Name: Private_Subnet
+      register: private_subnet

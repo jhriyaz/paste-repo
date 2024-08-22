@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: backend
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      volumes:
+        - name: mysqlvolume
+          configMap:
+            name: mysql-data
+        - name: secretvolume
+          secret:
+            secretName: mysql-secret
+      containers:
+      - image: shahedmehbub/two-tier-custom-backend-server
+        envFrom:
+        - configMapRef:
+            name: mysql-data
+        - secretRef:
+            name: mysql-secret
+        name: two-tier-custom-backend-server
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+          limits:
+            memory: "500Mi"
+            cpu: "200m"
+        volumeMounts:
+          - name: mysqlvolume
+            mountPath: /mysql-data
+          - name: secretvolume
+            mountPath: /mysqlsecret
+        ports:
+        - containerPort: 5000

@@ -1,0 +1,21 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-backend-service
+  labels:
+    app: python-backend-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: python-backend-service
+  template:
+    metadata:
+      labels:
+        app: python-backend-service
+    spec:
+      containers:
+      - name: python-backend-service
+        image: shahedmehbub/feb-23-cicd-backend:latest
+        imagePullPolicy: Always

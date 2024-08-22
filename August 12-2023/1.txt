@@ -1,0 +1,36 @@
+
+version: "3"
+services:
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+  auth:
+    image: zihadbappy/jenkins-auth-service:v6
+    ports:
+      - '5001:8000'
+  user:
+    image: zihadbappy/jenkins-user-service:v5
+    ports:
+      - '5002:3000'
+  task:
+    image: zihadbappy/jenkins-task-service:v4
+    ports:
+      - '5003:8000'
+  attendance:
+    image: zihadbappy/jenkins-attendance-service:v3
+    ports:
+      - '5004:3000'
+  delivery:
+    image: zihadbappy/jenkins-delivery-service:v2
+    ports:
+      - '5005:3000'
+  frontend:
+    image: zihadbappy/jenkins-frontend-service:v1
+    ports:
+      - '5000:3000'
+ 
